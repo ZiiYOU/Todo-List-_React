@@ -12,6 +12,19 @@ const Layout = () => {
   const [done, setDone] = useState([]);
   const [list, setList] = useState([]);
 
+  const localList = JSON.parse(localStorage.getItem("todo"));
+  const localDone = JSON.parse(localStorage.getItem("done"));
+
+  window.addEventListener("load", (event) => {
+    event.preventDefault();
+    if (localList) {
+      setList((currentArray) => [...localList]);
+    }
+    if (localDone) {
+      setDone((currentArray) => [...localDone]);
+    }
+  });
+
   const titleValueHandler = (event) => {
     setTitle(event.target.value);
   };
@@ -28,7 +41,11 @@ const Layout = () => {
       alert("할 일의 내용을 입력해주세요.");
       return;
     }
+
     setList((currentArray) => [[title, content], ...currentArray]);
+
+    localStorage.setItem("todo", JSON.stringify([[title, content], ...list]));
+
     setTitle("");
     setContent("");
   };
@@ -39,6 +56,11 @@ const Layout = () => {
         (el) => currentArray.indexOf(el) !== Number(event.target.id)
       )
     );
+    let notDelete = localList.filter(
+      (el) => localList.indexOf(el) !== Number(event.target.id)
+    );
+    localStorage.removeItem("todo");
+    localStorage.setItem("todo", JSON.stringify([...notDelete]));
   };
 
   const isDone = (event) => {
@@ -46,6 +68,13 @@ const Layout = () => {
       [list[event.target.id][0], list[event.target.id][1]],
       ...currentArray,
     ]);
+    localStorage.setItem(
+      "done",
+      JSON.stringify([
+        [list[event.target.id][0], list[event.target.id][1]],
+        ...done,
+      ])
+    );
     deleteCard(event);
   };
 
@@ -55,6 +84,11 @@ const Layout = () => {
         (el) => currentArray.indexOf(el) !== Number(event.target.id)
       )
     );
+    const doneNotDelete = localDone.filter(
+      (el) => localDone.indexOf(el) !== Number(event.target.id)
+    );
+    localStorage.removeItem("done");
+    localStorage.setItem("done", JSON.stringify([...doneNotDelete]));
   };
 
   const isNotDone = (event) => {
@@ -62,12 +96,28 @@ const Layout = () => {
       [done[event.target.id][0], done[event.target.id][1]],
       ...currentArray,
     ]);
+    localStorage.setItem(
+      "todo",
+      JSON.stringify([
+        [[done[event.target.id][0], done[event.target.id][1]]],
+        ...list,
+      ])
+    );
     deleteDone(event);
   };
 
   const handleEnter = (event) => {
     if (event.key === "Enter") {
       addCard(title, content);
+    }
+  };
+
+  const trashcan = (event) => {
+    if (confirm("완료된 항목을 비우시겠습니까?")) {
+      setDone([]);
+      localStorage.removeItem("done");
+    } else {
+      return;
     }
   };
 
@@ -120,7 +170,17 @@ const Layout = () => {
             </div>
           ))}
         </div>
-        <div className="title">완료된 항목</div>
+        <div className="title">
+          완료된 항목
+          <button
+            className="deleteAll"
+            onClick={() => {
+              trashcan(event);
+            }}
+          >
+            🗑️
+          </button>
+        </div>
         <div className="done-container">
           {done.map((item, index) => (
             <div className="card" key={index}>
