@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import Component from "./Component.jsx";
+import React, { useEffect, useState } from "react";
 
 const App = () => {
   return <Layout />;
@@ -11,6 +10,12 @@ const Layout = () => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [list, setList] = useState([]);
+
+  window.addEventListener("load", () => {
+    const localList = JSON.parse(localStorage.getItem("todo"));
+    setList(localList);
+    // localStorage.clear();
+  });
 
   const titleValueHandler = (event) => {
     setTitle(event.target.value);
@@ -29,10 +34,13 @@ const Layout = () => {
       return;
     }
 
-    setList((prev) => [
-      ...prev,
+    const prev = [
+      ...list,
       { id: Date.now(), title: title, content: content, isDone: false },
-    ]);
+    ];
+
+    setList(prev);
+    setItem(prev);
 
     setTitle("");
     setContent("");
@@ -46,7 +54,7 @@ const Layout = () => {
   };
 
   const isDone = (event) => {
-    const newList = list.map((el) => {
+    const doneList = list.map((el) => {
       if (el.id === Number(event.target.id)) {
         if (el.isDone === false) {
           el.isDone = true;
@@ -56,23 +64,28 @@ const Layout = () => {
       }
       return el;
     });
-    setList(newList);
+    setList(doneList);
+    setItem(doneList);
   };
 
   const deleteCard = (event) => {
-    setList((currentArray) =>
-      currentArray.filter((el) => el.id !== Number(event.target.id))
-    );
+    const deleteList = list.filter((el) => el.id !== Number(event.target.id));
+    setList(deleteList);
+    setItem(deleteList);
   };
 
   const trashcan = () => {
     if (confirm("완료된 항목을 비우시겠습니까?")) {
-      setList((currentArray) =>
-        currentArray.filter((el) => el.isDone === false)
-      );
+      const deleteAll = list.filter((el) => el.isDone === false);
+      setList(deleteAll);
+      setItem(deleteAll);
     } else {
       return;
     }
+  };
+
+  const setItem = (li) => {
+    localStorage.setItem("todo", JSON.stringify(li));
   };
 
   return (
