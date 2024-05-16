@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Component from "./Component.jsx";
 
 const App = () => {
   return <Layout />;
@@ -9,19 +10,14 @@ export default App;
 const Layout = () => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const [done, setDone] = useState([]);
   const [list, setList] = useState([]);
 
   const localList = JSON.parse(localStorage.getItem("todo"));
-  const localDone = JSON.parse(localStorage.getItem("done"));
 
   window.addEventListener("load", (event) => {
     event.preventDefault();
     if (localList) {
       setList((currentArray) => [...localList]);
-    }
-    if (localDone) {
-      setDone((currentArray) => [...localDone]);
     }
   });
 
@@ -33,7 +29,7 @@ const Layout = () => {
     setContent(event.target.value);
   };
 
-  const addCard = (title, content) => {
+  const addCard = () => {
     if (title.trim() === "") {
       alert("할 일의 제목을 입력해주세요.");
       return;
@@ -42,9 +38,18 @@ const Layout = () => {
       return;
     }
 
-    setList((currentArray) => [[title, content], ...currentArray]);
+    setList((currentArray) => [
+      { id: Date.now(), title: title, content: content, isDone: true },
+      ...currentArray,
+    ]);
 
-    localStorage.setItem("todo", JSON.stringify([[title, content], ...list]));
+    localStorage.setItem(
+      "todo",
+      JSON.stringify([
+        { id: Date.now(), title: title, content: content, isDone: true },
+        ...list,
+      ])
+    );
 
     setTitle("");
     setContent("");
@@ -64,58 +69,42 @@ const Layout = () => {
   };
 
   const isDone = (event) => {
-    setDone((currentArray) => [
-      [list[event.target.id][0], list[event.target.id][1]],
-      ...currentArray,
-    ]);
-    localStorage.setItem(
-      "done",
-      JSON.stringify([
-        [list[event.target.id][0], list[event.target.id][1]],
-        ...done,
-      ])
-    );
-    deleteCard(event);
-  };
-
-  const deleteDone = (event) => {
-    setDone((currentArray) =>
-      currentArray.filter(
-        (el) => currentArray.indexOf(el) !== Number(event.target.id)
-      )
-    );
-    const doneNotDelete = localDone.filter(
-      (el) => localDone.indexOf(el) !== Number(event.target.id)
-    );
-    localStorage.removeItem("done");
-    localStorage.setItem("done", JSON.stringify([...doneNotDelete]));
-  };
-
-  const isNotDone = (event) => {
-    setList((currentArray) => [
-      [done[event.target.id][0], done[event.target.id][1]],
-      ...currentArray,
-    ]);
-    localStorage.setItem(
-      "todo",
-      JSON.stringify([
-        [[done[event.target.id][0], done[event.target.id][1]]],
-        ...list,
-      ])
-    );
-    deleteDone(event);
+    list.forEach((el) => {
+      if (el.id === event.target.id) {
+        if (el.isDone === true) {
+          el.isDone = false;
+        } else {
+          el.isDone = true;
+        }
+      }
+    });
+    localList.forEach((el) => {
+      if (el.id === Number(event.target.id)) {
+        if (el.isDone === true) {
+          el.isDone = false;
+        } else {
+          el.isDone = true;
+        }
+      }
+    });
+    localStorage.removeItem("todo");
+    localStorage.setItem("todo", JSON.stringify([...localList]));
   };
 
   const handleEnter = (event) => {
+    event.preventDefault();
     if (event.key === "Enter") {
-      addCard(title, content);
+      addCard();
     }
   };
 
-  const trashcan = (event) => {
+  const trashcan = () => {
     if (confirm("완료된 항목을 비우시겠습니까?")) {
-      setDone([]);
-      localStorage.removeItem("done");
+      localStorage.removeItem("todo");
+      localStorage.setItem(
+        "todo",
+        JSON.stringify(localList.filter((el) => el.isDone === true))
+      );
     } else {
       return;
     }
@@ -151,24 +140,36 @@ const Layout = () => {
           </div>
         </div>
         <div className="working-container">
-          {list.map((item, index) => (
-            <div className="card" key={index}>
-              <div className="card-inner">
-                <div className="card-title">{item[0]}</div>
-                <div className="card-content">{item[1]}</div>
+          {list
+            .filter((item) => item.isDone === true)
+            .map((item, index) => (
+              <div className="card" key={index}>
+                <div className="card-inner">
+                  <div className="card-title">{item.title}</div>
+                  <div className="card-content">{item.content}</div>
+                </div>
+                <button
+                  className="done"
+                  id={item.id}
+                  onClick={() => isDone(event)}
+                >
+                  ✔ done
+                </button>
+                <button
+                  className="delete"
+                  id={item.id}
+                  onClick={() => deleteCard(event)}
+                >
+                  x
+                </button>
               </div>
-              <button className="done" id={index} onClick={() => isDone(event)}>
-                ✔ done
-              </button>
-              <button
-                className="delete"
-                id={index}
-                onClick={() => deleteCard(event)}
-              >
-                x
-              </button>
-            </div>
-          ))}
+              // <Component
+              //   item={item}
+              //   key={index}
+              //   isDone={isDone(event)}
+              //   deleteCard={deleteCard(event)}
+              // />
+            ))}
         </div>
         <div className="title">
           완료된 항목
@@ -182,30 +183,32 @@ const Layout = () => {
           </button>
         </div>
         <div className="done-container">
-          {done.map((item, index) => (
-            <div className="card" key={index}>
-              <div className="card-inner">
-                <div className="card-title">{item[0]}</div>
-                <div className="card-content">{item[1]}</div>
+          {list
+            .filter((item) => item.isDone === false)
+            .map((item, index) => (
+              <div className="card" key={index}>
+                <div className="card-inner">
+                  <div className="card-title">{item.title}</div>
+                  <div className="card-content">{item.content}</div>
+                </div>
+                <button
+                  className="working"
+                  id={item.id}
+                  onClick={() => {
+                    isDone(event);
+                  }}
+                >
+                  ✔ working
+                </button>
+                <button
+                  className="delete"
+                  id={item.id}
+                  onClick={() => deleteCard(event)}
+                >
+                  x
+                </button>
               </div>
-              <button
-                className="working"
-                id={index}
-                onClick={() => {
-                  isNotDone(event);
-                }}
-              >
-                ✔ working
-              </button>
-              <button
-                className="delete"
-                id={index}
-                onClick={() => deleteDone(event)}
-              >
-                x
-              </button>
-            </div>
-          ))}
+            ))}
         </div>
       </div>
     </div>
