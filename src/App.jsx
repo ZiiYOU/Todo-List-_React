@@ -68,7 +68,7 @@ const Layout = () => {
   const trashcan = () => {
     if (confirm("완료된 항목을 비우시겠습니까?")) {
       setList((currentArray) =>
-        currentArray.filter((el) => el.isDone === true)
+        currentArray.filter((el) => el.isDone === false)
       );
     } else {
       return;
