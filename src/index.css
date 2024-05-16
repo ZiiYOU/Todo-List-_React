@@ -1,0 +1,170 @@
+.inner {
+  padding: 30px 10%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 1200px;
+  min-width: 800px;
+}
+
+.inner .title {
+  width: 70%;
+  height: 50px;
+  font-size: 18px;
+  font-weight: 700;
+  border-bottom: #aaa 1px solid;
+  padding-left: 10px;
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.inner .working-container {
+  position: relative;
+  width: 70%;
+  height: 40vh;
+  padding: 0 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow-y: auto;
+}
+
+.inner .card {
+  position: absolute;
+  display: flex;
+  flex-direction: row;
+  position: relative;
+  width: 95%;
+  height: 75px;
+  border-bottom: #aaa solid 1px;
+  padding: 10px;
+}
+
+.inner .input-container {
+  position: relative;
+  width: 70%;
+  height: 75px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.inner .input-container .card .input-inner {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.inner .input-container .card .input-inner .input-box {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.inner .input-container .card .input-inner .input-box * {
+  width: 80%;
+  padding: 5px 10px;
+  margin-bottom: 5px;
+  align-items: center;
+  justify-content: center;
+  border: #aaa 0.5px solid;
+  border-radius: 10px;
+}
+.inner .input-container .card .input-inner .input-box *:focus {
+  outline-color: #aaa;
+}
+
+.inner .card .plus {
+  cursor: pointer;
+  outline: none;
+  width: 24px;
+  height: 24px;
+  background-color: #fff;
+  border: none;
+  font-size: 18px;
+  color: #aaa;
+}
+
+.inner .card .plus:hover {
+  color: black;
+  transition: 0.5s;
+}
+
+.inner .card .card-inner {
+  width: 100%;
+  height: 90%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-left: 5px;
+}
+
+.inner .card .card-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.inner .card .card-content {
+  font-size: 14px;
+}
+
+.inner .card .delete {
+  cursor: pointer;
+  outline: none;
+  width: 24px;
+  height: 24px;
+  background-color: #fff;
+  border: none;
+}
+
+.inner .card .delete:hover {
+  color: #aaa;
+  transition: 0.5s;
+}
+
+.inner .card .done {
+  cursor: pointer;
+  outline: none;
+  width: 100px;
+  height: 25px;
+  background-color: #e2edf2;
+  border: none;
+  border-radius: 10px;
+  color: #346c80;
+  margin-right: 7px;
+}
+
+.inner .card .done:hover {
+  border: #346c80 1px solid;
+  transition: 0.1s;
+}
+
+.inner .card .working {
+  cursor: pointer;
+  outline: none;
+  width: 100px;
+  height: 25px;
+  background-color: #f8f1f4;
+  border: none;
+  border-radius: 10px;
+  color: #a45276;
+  margin-right: 7px;
+}
+
+.inner .card .working:hover {
+  border: #a45276 1px solid;
+}
+
+.inner .done-container {
+  width: 70%;
+  height: 35vh;
+  padding: 0 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow-y: auto;
+}
