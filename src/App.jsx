@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import Card from "./Card.jsx";
 
 const App = () => {
   return <Layout />;
@@ -14,7 +15,6 @@ const Layout = () => {
   window.addEventListener("load", () => {
     const localList = JSON.parse(localStorage.getItem("todo"));
     setList(localList);
-    // localStorage.clear();
   });
 
   const titleValueHandler = (event) => {
@@ -99,19 +99,19 @@ const Layout = () => {
                 <input
                   type="text"
                   placeholder="제목을 입력해주세요."
-                  onChange={() => titleValueHandler(event)}
-                  onKeyUp={() => handleEnter(event)}
+                  onChange={titleValueHandler}
+                  onKeyUp={handleEnter}
                   value={title}
                 />
                 <input
                   type="text"
                   placeholder="내용을 입력해주세요."
-                  onChange={() => contentValueHandler(event)}
-                  onKeyUp={() => handleEnter(event)}
+                  onChange={contentValueHandler}
+                  onKeyUp={handleEnter}
                   value={content}
                 />
               </div>
-              <button className="plus" onClick={() => addCard(title, content)}>
+              <button className="plus" onClick={addCard}>
                 +
               </button>
             </div>
@@ -121,26 +121,12 @@ const Layout = () => {
           {list
             .filter((item) => item.isDone === false)
             .map((item, index) => (
-              <div className="card" key={index}>
-                <div className="card-inner">
-                  <div className="card-title">{item.title}</div>
-                  <div className="card-content">{item.content}</div>
-                </div>
-                <button
-                  className="done"
-                  id={item.id}
-                  onClick={() => isDone(event)}
-                >
-                  ✔ done
-                </button>
-                <button
-                  className="delete"
-                  id={item.id}
-                  onClick={() => deleteCard(event)}
-                >
-                  x
-                </button>
-              </div>
+              <Card
+                item={item}
+                key={index}
+                isDone={isDone}
+                deleteCard={deleteCard}
+              />
             ))}
         </div>
         <div className="title">
@@ -158,26 +144,12 @@ const Layout = () => {
           {list
             .filter((item) => item.isDone === true)
             .map((item, index) => (
-              <div className="card" key={index}>
-                <div className="card-inner">
-                  <div className="card-title">{item.title}</div>
-                  <div className="card-content">{item.content}</div>
-                </div>
-                <button
-                  className="working"
-                  id={item.id}
-                  onClick={() => isDone(event)}
-                >
-                  ✔ working
-                </button>
-                <button
-                  className="delete"
-                  id={item.id}
-                  onClick={() => deleteCard(event)}
-                >
-                  x
-                </button>
-              </div>
+              <Card
+                item={item}
+                key={index}
+                isDone={isDone}
+                deleteCard={deleteCard}
+              />
             ))}
         </div>
       </div>
